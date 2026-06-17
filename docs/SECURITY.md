@@ -1,47 +1,52 @@
-# Security
-
-## Public Release Policy
-
-This repository is intentionally documentation-only.
-
-The private project contains material that should not be exposed in a public repository, including:
-
-- local environment assumptions
-- personal workflow context
-- private configuration
-- local automation details tied to a real workstation
-- API and OAuth integration setup
+# Security and Privacy
 
 ## Why the Source Is Not Public
 
-The goal of this repository is to demonstrate technical depth without giving away the implementation or exposing sensitive data.
+This repository is documentation-only by design.
 
-This is both a security choice and an ownership choice:
+The private implementation contains:
+- local automation flows tied to a real daily workstation
+- personal profile, behavioral context, and task history
+- Google OAuth credentials and API configuration
+- Telegram bot token and allowed-user list
+- voice model paths and TTS tuning parameters
+- operational prompts and memory assets
 
-- security, because the real project touches personal and operational context
-- ownership, because the implementation reflects substantial original effort
+Publishing the source code would expose personal infrastructure, remove the author's competitive advantage in using the tool, and provide a direct blueprint for replication without the effort of building it.
 
-## Publishing Guidelines
+## What Is in This Repository
 
-If demo material is added to this repository:
+This repository contains only:
+- product and engineering documentation
+- architecture description
+- technical decision rationale
+- roadmap
 
-- remove usernames, email addresses, device names, and file paths
-- avoid screenshots showing inboxes, calendars, or personal reminders
-- never include `.env`, `token.json`, `credentials.json`, or machine-specific logs
-- never publish API keys, bot tokens, or model endpoints that are not meant to be public
+No code, no configuration, no credentials, no personal data.
 
-## Recommended Portfolio Practice
+## Publishing Guidelines for Demo Material
 
-For portfolio review, prefer:
+If screenshots or video demos are added to the `assets/` folder:
 
-- architecture diagrams
-- feature summaries
-- sanitized screenshots
-- live walkthroughs
-- recorded demos with redacted content
+- remove usernames, email addresses, device names, and local file paths
+- blur or crop any inbox content, calendar entries, or personal reminders
+- do not include terminal output showing API keys, token paths, or model paths
+- do not include voice samples that contain personal information
 
-Avoid:
+## Threat Model
 
-- publishing operational prompts
-- publishing automation internals that can be trivially cloned
-- publishing private datasets or user profile artifacts
+The primary risk this repository guards against is **capability cloning** — someone reading the source and deploying a functionally equivalent system without the original engineering investment.
+
+The secondary risk is **credential exposure** — inadvertently including `.env`, `token.json`, `credentials.json`, or similar files that would give unauthorized access to personal services.
+
+Both risks are addressed by publishing documentation only.
+
+## Portfolio Review
+
+For employers or collaborators who want to evaluate the implementation:
+
+- a controlled live walkthrough is available on request
+- the author can share selected code sections under NDA if appropriate
+- screenshots and capability demonstrations can be provided with sensitive content redacted
+
+Do not request or expect access to the full private repository for general portfolio evaluation.
