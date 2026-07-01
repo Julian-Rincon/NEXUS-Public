@@ -128,11 +128,10 @@ Switches CPU/RAM scheduling priority between profiles (work, streaming, focus, n
 A native control center that runs alongside the voice pipeline:
 
 - real-time conversation log
-- system metrics (CPU, RAM, disk, GPU — updated continuously)
-- latency readings per pipeline stage (STT, LLM, TTS)
-- backend status for every configured provider
-- pending action confirmations
+- status cards per subsystem (audio, Telegram, wake word, browser automation, desktop automation, Google credentials)
 - system tray integration
+
+It is a health/status console, not a telemetry dashboard — detailed system metrics and per-stage latency are queried on demand through voice or Telegram rather than rendered as permanent gauges.
 
 ### Telegram
 
@@ -198,6 +197,8 @@ A background daemon that polls at regular intervals:
 - Classifies incoming mail by urgency and importance
 - Monitors CPU, RAM, and disk usage; alerts on sustained pressure
 - Surfaces anomalies from the SecurityWatcher
+- Tails the active project's logs for new errors (LogWatcher), tied to the last known work context
+- Organizes downloads and scratch files by type, and warns on low disk space (FileJanitor)
 - Delivers a morning briefing automatically
 
 ---

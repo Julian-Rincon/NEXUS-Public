@@ -24,7 +24,7 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 - **Development workflow automation** — runs test suites, reads logs, builds, restarts dev servers
 - **Natural-language code generation** — turns a spoken request into a validated Python file
 - **Telegram remote control** — voice-note-first responses from anywhere
-- **Desktop HUD** — a native control center with live system metrics and a real-time conversation log
+- **Desktop HUD** — a native control center with subsystem status cards and a real-time conversation log
 - **Daily OS layer** — morning briefing, end-of-day summary, productivity metrics, daily priorities by voice
 - **Gaming mode** — automatically frees GPU VRAM and switches thermal profiles when a game is detected
 - **Guarded system power control** — can lock, suspend, hibernate, shut down, or restart the machine by voice, gated behind an explicit confirmation step
@@ -40,7 +40,7 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 | Custom wake word | Active — purpose-trained detection model, no cloud dependency |
 | Cloned voice (primary) + local fallback | Active — low-latency streaming synthesis, automatic local fallback |
 | Natural language routing | Active — any phrasing, 15+ NL categories, voice and Telegram |
-| Desktop HUD | Active — native control center, live metrics, system tray integration |
+| Desktop HUD | Active — native control center, subsystem status cards, system tray integration |
 | Skills system | Active — 26 auto-discovered skills (media, focus, GPU monitor, notes, weather, resource manager, dev workflow, security monitor, code generator…) |
 | Autonomous desktop agent | Active — vision + input, up to 25 steps, allowlisted for safety |
 | Meeting agent | Active — join + virtual mic + live transcript + summary |
@@ -72,12 +72,11 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 The operator console is a native desktop control center that runs alongside the voice pipeline.
 
 **What it shows:**
-- Real-time conversation log with typewriter-style rendering
-- CPU / RAM / disk / GPU gauges, live
-- STT / LLM / TTS latency indicators
-- Backend status for every configured LLM, STT, and TTS provider
-- Pending action confirmation panel — surfaces anything awaiting explicit approval
+- Real-time conversation log (user and NEXUS turns)
+- Status cards for each subsystem — audio devices, Telegram bot, wake word listener, browser automation, desktop automation, Google credentials
 - System tray integration for quick access without keeping a window open
+
+Deep system metrics (CPU/RAM/disk/GPU, per-stage latency) are available through voice and Telegram (`estado del sistema`, `cómo está el equipo`) rather than as a permanent HUD gauge — the HUD is a health/status console, not a live telemetry dashboard.
 
 ---
 
@@ -240,6 +239,8 @@ A background daemon polls at regular intervals:
 - **Email**: classifies incoming mail (important / spam / normal) and surfaces what matters
 - **System resources**: warns on CPU / RAM / disk pressure
 - **Security**: surfaces anomalies detected by the passive security watcher
+- **Log watcher**: tails the active project's logs and alerts on new errors, tied to the last known work context
+- **File organization**: sorts downloads and scratch files into folders by type, and warns when disk space runs low
 - **Morning briefing**: summarizes agenda and unread mail automatically
 
 ---
@@ -258,7 +259,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full breakdown.
 | SecurityWatcher | Passive anomaly detection — processes, ports, USB, auth failures |
 | Resource manager | CPU/RAM priority profiles per activity |
 | Gaming mode | GPU-aware VRAM manager + thermal profile switching |
-| HUD (desktop) | Native control center with live metrics and system tray |
+| HUD (desktop) | Native control center with subsystem status cards and system tray |
 | Telegram | Voice-first bot with NL routing |
 | MeetingAgent | Browser join + virtual mic + live transcript |
 | DesktopAgent | Vision + input automation, allowlisted, step verification |
@@ -295,7 +296,7 @@ See [docs/ROADMAP.md](docs/ROADMAP.md).
 - Streaming pipeline with barge-in interrupt and a custom-trained wake word
 - Five-tier TieredBrain with circuit breaker
 - Cloned-voice TTS with automatic local fallback
-- Native desktop HUD with live metrics and system tray
+- Native desktop HUD with subsystem status cards and system tray
 - 26-skill plugin system with auto-discovery
 - NL normalization — any Spanish phrasing routes correctly
 - Meeting agent with virtual mic and live transcription
