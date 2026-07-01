@@ -125,15 +125,14 @@ Switches CPU/RAM scheduling priority between profiles (work, streaming, focus, n
 
 ### HUD (Desktop)
 
-A native control center that runs alongside the voice pipeline, styled after the same void-black/blood-red identity used throughout, with an animated red "digital rain" background behind the panels:
+A single-panel control center, styled after the void-black/blood-red identity used throughout, with an animated red "digital rain" background behind the panel:
 
-- real-time conversation log
+- title, tagline, and a small tag line naming the active stack
 - a live backend bar (LLM tier count, STT/TTS models, wake model, skill count, GPU status) read from configuration and hardware at runtime
-- an animated status core for the local pipeline
-- status cards per subsystem (audio, Telegram, wake word, browser automation, desktop automation, Google credentials)
-- system tray integration
+- one full-width log combining a real boot sequence with the ongoing conversation
+- a command input at the bottom
 
-Detailed system resource usage (CPU, RAM, disk, GPU) is queried on demand through voice or Telegram rather than rendered as a permanent HUD gauge.
+Operational controls (voice round, Telegram start/stop, wake word restart, self-check, settings) live in the system tray menu, not as buttons in the main window — the panel stays focused on what NEXUS is doing. Detailed system resource usage (CPU, RAM, disk, GPU) is queried on demand through voice or Telegram rather than rendered as a permanent HUD gauge.
 
 ### Telegram
 

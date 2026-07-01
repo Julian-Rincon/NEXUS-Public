@@ -69,18 +69,17 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 
 ## Desktop HUD
 
-The operator console is a native desktop control center that runs alongside the voice pipeline — void-black background, blood-red accents, an animated red "digital rain" effect behind the panels.
+A single-panel operator console that runs alongside the voice pipeline — void-black background, blood-red accents, an animated red "digital rain" effect behind the panel.
 
 ![NEXUS desktop HUD](assets/nexus_hud.png)
 
 **What it shows:**
-- Real-time conversation log (user and NEXUS turns)
+- Title, tagline, and a small tag line naming the active stack
 - A live backend bar — active LLM tier count, current STT and TTS models, wake word model, number of loaded skills, GPU status — read directly from configuration and hardware at runtime, not hardcoded
-- An animated status core for the local pipeline
-- Status cards for each subsystem — wake word listener, Telegram bot, browser automation, desktop automation, audio devices, Google credentials
-- System tray integration for quick access without keeping a window open
+- A single full-width log combining a real boot sequence (each line reflects actual configured state, not placeholder text) with the ongoing conversation
+- A command input at the bottom
 
-Detailed system resource usage (CPU/RAM/disk/GPU) is queried on demand through voice or Telegram (`estado del sistema`, `cómo está el equipo`) rather than rendered as a permanent gauge in the HUD.
+Operational controls (voice round, Telegram start/stop, wake word restart, self-check, settings, bug reports) live in the system tray menu rather than as buttons in the main window — the main panel stays focused on what NEXUS is doing, not on how to operate it. Detailed system resource usage (CPU/RAM/disk/GPU) is queried on demand through voice or Telegram rather than rendered as a permanent gauge.
 
 ---
 
