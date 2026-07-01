@@ -1,41 +1,61 @@
 # Roadmap
 
-## Completed (mid 2026)
+## Completed
 
 ### Core voice pipeline
-- [x] Streaming LLM → TTS — first spoken word in ~0.5 s
+- [x] Streaming LLM → TTS — first spoken word in under a second
 - [x] Barge-in with VAD — interrupts playback in ~40 ms
-- [x] Wake word (passive background detection)
+- [x] Custom-trained wake word — purpose-built detection model, no generic keyword spotting
 - [x] TTS phrase cache — zero synthesis latency for common phrases
+- [x] Cloud voice cloning (primary) with automatic local fallback
 - [x] Hybrid STT — cloud primary with local fallback
-- [x] Bilingual phonetics — English words pronounced correctly in Spanish speech, same voice model
+- [x] Bilingual phonetics on the local fallback voice — English words pronounced correctly in Spanish speech
 
 ### Intelligence layer
-- [x] TieredBrain — three-level LLM with circuit breaker
+- [x] TieredBrain — five-level LLM with circuit breaker (local, fast cloud, high-throughput cloud, large-context/multimodal cloud, fallback cloud)
 - [x] Deterministic intent routing before LLM involvement
+- [x] Natural-language classification fallback (local pattern match → fast cloud classification → local model as last resort)
 - [x] Session memory — recent sessions injected as context
-- [x] Vector memory — ChromaDB semantic recall
+- [x] Vector memory — semantic recall
+- [x] Episodic memory — causal event log, queryable by day/week
+- [x] Aggressive local-tier timeouts with circuit breaking, so a slow or cold local model never blocks a response for long
 
 ### Operator interface
-- [x] Iron Man web HUD — arc reactor SVG, WebSocket, live system metrics
-- [x] tkinter desktop HUD (legacy, still maintained)
-- [x] Telegram bot — voice-first (OGG notes + text), NL routing
-- [x] Wake word active simultaneously with Telegram bot
+- [x] Native desktop HUD — live system metrics, system tray integration
+- [x] Telegram bot — voice-first (voice notes + text), NL routing
+- [x] Wake word active simultaneously with the Telegram bot
 
 ### Agentic capabilities
-- [x] Autonomous desktop agent — vision + input, up to 25 steps, step verification
-- [x] Meeting agent — browser join + PipeWire virtual mic + live transcription + summary
-- [x] Proactive monitor — calendar alerts, email urgency, system resource warnings, morning briefing
+- [x] Autonomous desktop agent — vision + input, up to 25 steps, step verification, hard-allowlisted for safety
+- [x] Meeting agent — browser join + virtual mic + live transcription + summary
+- [x] Proactive monitor — calendar alerts, email urgency, system resource warnings, security anomalies, morning briefing
 
 ### Google Workspace
 - [x] Calendar — list, create, natural-language datetime parsing
 - [x] Gmail — list unread, send, reply to thread, draft, read full message
 - [x] Drive — list, search, read, create text files and Docs
 
+### Expanded skills (v2)
+- [x] Resource manager — CPU/RAM priority profiles per activity
+- [x] Dev workflow automation — test runner detection, log triage, build, server restart
+- [x] Passive security watcher — process/port/USB/auth anomaly detection, alert-only, never acts unilaterally
+- [x] Natural-language code generation — spoken request → validated, saved source file
+- [x] Home automation — IoT device and scene control by voice
+- [x] Personal finance summary — bank notification email parsing
+
+### Safety
+- [x] Confirmation gating for irreversible actions (mail, automation, machine power state) with risk levels, expiry, and remote-channel tokens
+- [x] Guarded system power control — lock is immediate; suspend/hibernate/shutdown/restart require explicit confirmation
+- [x] Hard allowlists for autonomous desktop actions (known-app list, http(s)-only URL opens, pattern-validated key combos)
+
+### Multi-tool exposure
+- [x] MCP server exposing core capabilities as tools for external AI clients
+
 ### Infrastructure
-- [x] systemd user service — Telegram bot auto-starts on login
-- [x] PipeWire virtual microphone — persistent across reboots
-- [x] Google OAuth2 — automatic token refresh and scope validation
+- [x] Background service for the Telegram bot — auto-starts on login, restarts on failure
+- [x] Persistent virtual microphone across reboots
+- [x] OAuth2 with automatic token refresh and scope validation
+- [x] Gaming-aware resource isolation — every local-model code path (LLM tier, NL classification fallback, memory embeddings) individually disabled during a detected game session, not just the main conversational route
 
 ---
 
@@ -43,29 +63,23 @@
 
 ### Near term
 
-**Episodic memory**  
-A timestamped causal log of what happened, what was decided, and what was said — distinct from semantic vector recall. Enables references like "last Tuesday you said you'd call Luis — did that happen?" without a prompt.
+**Wake word fine-calibration**
+Environment-specific noise and microphone profiling to tighten detection accuracy for the specific room and hardware in daily use.
 
-**Life OS task tracker**  
-Persistent project and task graph with deadlines, blockers, and automated follow-up nudges. The assistant closes the loop rather than just recording tasks.
+**Home automation entity auto-discovery**
+Automatic detection of new devices on the local automation hub instead of manual configuration per device.
 
 ### Mid term
 
-**Home Assistant integration**  
-Control lights, locks, sensors, and HVAC through natural language. Local API, no cloud required. Bridge to 3,000+ compatible devices.
+**Finance agent budgeting integration**
+Connect the existing bank-email parsing pipeline to a personal budgeting tool instead of only producing ad hoc summaries.
 
-**Finance agent**  
-Parse bank notification emails from Gmail, categorize transactions, and deliver a weekly spending summary with alerts on unusual activity.
-
-**Passive life logging**  
-Background process that logs application activity, meeting attendance, and document interactions. Periodic synthesis pass identifies patterns and surfaces insights proactively.
+**Deeper MCP delegation**
+Expose more granular tools over the existing MCP server so specialized external agents (research, coding) can be delegated sub-tasks without overloading the main conversational LLM.
 
 ### Longer term
 
-**Multi-agent architecture (MCP)**  
-Expose JARVIS capabilities as Model Context Protocol tools. Specialized sub-agents (research, coding, finance) can be delegated tasks without overloading the main conversational brain.
-
-**Stronger operator console**  
+**Stronger operator console**
 Visual timeline of past sessions, task graph display, and memory browser in the HUD.
 
 ---
