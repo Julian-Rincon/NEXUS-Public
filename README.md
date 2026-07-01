@@ -71,12 +71,16 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 
 The operator console is a native desktop control center that runs alongside the voice pipeline.
 
+![NEXUS desktop HUD](assets/nexus_hud.png)
+
 **What it shows:**
 - Real-time conversation log (user and NEXUS turns)
-- Status cards for each subsystem — audio devices, Telegram bot, wake word listener, browser automation, desktop automation, Google credentials
+- An animated status core for the local pipeline
+- Status cards for each subsystem — wake word listener, Telegram bot, browser automation, desktop automation, audio devices, Google credentials
+- Live STT / LLM / TTS latency tiles, color-coded when a stage exceeds its expected threshold
 - System tray integration for quick access without keeping a window open
 
-Deep system metrics (CPU/RAM/disk/GPU, per-stage latency) are available through voice and Telegram (`estado del sistema`, `cómo está el equipo`) rather than as a permanent HUD gauge — the HUD is a health/status console, not a live telemetry dashboard.
+Detailed system resource usage (CPU/RAM/disk/GPU) is queried on demand through voice or Telegram (`estado del sistema`, `cómo está el equipo`) rather than rendered as a permanent gauge in the HUD.
 
 ---
 

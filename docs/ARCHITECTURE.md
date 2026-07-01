@@ -128,10 +128,12 @@ Switches CPU/RAM scheduling priority between profiles (work, streaming, focus, n
 A native control center that runs alongside the voice pipeline:
 
 - real-time conversation log
+- an animated status core for the local pipeline
 - status cards per subsystem (audio, Telegram, wake word, browser automation, desktop automation, Google credentials)
+- live STT/LLM/TTS latency tiles, color-coded when a stage exceeds its expected threshold
 - system tray integration
 
-It is a health/status console, not a telemetry dashboard — detailed system metrics and per-stage latency are queried on demand through voice or Telegram rather than rendered as permanent gauges.
+Detailed system resource usage (CPU, RAM, disk, GPU) is queried on demand through voice or Telegram rather than rendered as a permanent HUD gauge.
 
 ### Telegram
 
