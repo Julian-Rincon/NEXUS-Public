@@ -8,8 +8,9 @@ The private implementation contains:
 - local automation flows tied to a real daily workstation
 - personal profile, behavioral context, and task history
 - Google OAuth credentials and API configuration
+- multiple LLM/STT/TTS provider API keys and account-specific model configuration
 - Telegram bot token and allowed-user list
-- voice model paths and TTS tuning parameters
+- voice model files and TTS tuning parameters
 - operational prompts and memory assets
 
 Publishing the source code would expose personal infrastructure, remove the author's competitive advantage in using the tool, and provide a direct blueprint for replication without the effort of building it.
@@ -37,7 +38,7 @@ If screenshots or video demos are added to the `assets/` folder:
 
 The primary risk this repository guards against is **capability cloning** — someone reading the source and deploying a functionally equivalent system without the original engineering investment.
 
-The secondary risk is **credential exposure** — inadvertently including `.env`, `token.json`, `credentials.json`, or similar files that would give unauthorized access to personal services.
+The secondary risk is **credential exposure** — inadvertently including environment files, OAuth tokens, or provider API keys that would give unauthorized access to personal services or accounts.
 
 Both risks are addressed by publishing documentation only.
 
