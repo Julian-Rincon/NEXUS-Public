@@ -41,7 +41,7 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 | Cloned voice (primary) + local fallback | Active — low-latency streaming synthesis, automatic local fallback |
 | Natural language routing | Active — any phrasing, 15+ NL categories, voice and Telegram |
 | Desktop HUD | Active — native control center, subsystem status cards, system tray integration |
-| Skills system | Active — 26 auto-discovered skills (media, focus, GPU monitor, notes, weather, resource manager, dev workflow, security monitor, code generator…) |
+| Skills system | Active — 36 auto-discovered skills (media, focus, GPU monitor, notes, weather, resource manager, dev workflow, security monitor, code generator, personal automation…) |
 | Autonomous desktop agent | Active — vision + input, up to 25 steps, allowlisted for safety |
 | Meeting agent | Active — join + virtual mic + live transcript + summary |
 | Proactive monitor | Active — calendar, email, system resources, morning briefing |
@@ -69,15 +69,15 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 
 ## Desktop HUD
 
-The operator console is a native desktop control center that runs alongside the voice pipeline.
+The operator console is a native desktop control center that runs alongside the voice pipeline — void-black background, blood-red accents, an animated red "digital rain" effect behind the panels.
 
 ![NEXUS desktop HUD](assets/nexus_hud.png)
 
 **What it shows:**
 - Real-time conversation log (user and NEXUS turns)
+- A live backend bar — active LLM tier count, current STT and TTS models, wake word model, number of loaded skills, GPU status — read directly from configuration and hardware at runtime, not hardcoded
 - An animated status core for the local pipeline
 - Status cards for each subsystem — wake word listener, Telegram bot, browser automation, desktop automation, audio devices, Google credentials
-- Live STT / LLM / TTS latency tiles, color-coded when a stage exceeds its expected threshold
 - System tray integration for quick access without keeping a window open
 
 Detailed system resource usage (CPU/RAM/disk/GPU) is queried on demand through voice or Telegram (`estado del sistema`, `cómo está el equipo`) rather than rendered as a permanent gauge in the HUD.
@@ -86,7 +86,7 @@ Detailed system resource usage (CPU/RAM/disk/GPU) is queried on demand through v
 
 ## Skills System
 
-26 capabilities are packaged as self-contained skills, auto-discovered at startup with no manual registration. Each skill declares its own triggers and handles its own execution context.
+36 capabilities are packaged as self-contained skills, auto-discovered at startup with no manual registration. Each skill declares its own triggers and handles its own execution context.
 
 Examples:
 
@@ -258,7 +258,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full breakdown.
 | Assistant | Orchestrates STT → LLM → actions → TTS, manages state |
 | TieredBrain | Five-level LLM with circuit breaker and token streaming |
 | Voice | Capture, barge-in VAD, custom wake word, primary + fallback TTS |
-| Skills | 26 auto-discovered skill plugins |
+| Skills | 36 auto-discovered skill plugins |
 | Actions | Central router — NL normalization, Daily OS, Google, meetings, system, guarded power control |
 | SecurityWatcher | Passive anomaly detection — processes, ports, USB, auth failures |
 | Resource manager | CPU/RAM priority profiles per activity |

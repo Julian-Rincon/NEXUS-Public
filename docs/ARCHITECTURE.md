@@ -125,12 +125,12 @@ Switches CPU/RAM scheduling priority between profiles (work, streaming, focus, n
 
 ### HUD (Desktop)
 
-A native control center that runs alongside the voice pipeline:
+A native control center that runs alongside the voice pipeline, styled after the same void-black/blood-red identity used throughout, with an animated red "digital rain" background behind the panels:
 
 - real-time conversation log
+- a live backend bar (LLM tier count, STT/TTS models, wake model, skill count, GPU status) read from configuration and hardware at runtime
 - an animated status core for the local pipeline
 - status cards per subsystem (audio, Telegram, wake word, browser automation, desktop automation, Google credentials)
-- live STT/LLM/TTS latency tiles, color-coded when a stage exceeds its expected threshold
 - system tray integration
 
 Detailed system resource usage (CPU, RAM, disk, GPU) is queried on demand through voice or Telegram rather than rendered as a permanent HUD gauge.
