@@ -117,3 +117,63 @@
 **Why**: the bot should remain available even when the desktop HUD is not running — after a crash, or when operating headlessly. The OS service manager handles restart logic and session lifecycle cleanly, and the assistant behaves as the always-on system it is designed to be rather than an app the user has to remember to launch.
 
 **Tradeoff**: the bot process and the HUD process are decoupled. Shared state (e.g., an active meeting, or gaming-mode status) has to be coordinated explicitly rather than living in one process.
+
+---
+
+## Detection Separated from Delivery (Heartbeat)
+
+**Decision**: proactive monitors detect everything and report freely; a single judgment layer at the delivery boundary decides what actually interrupts the user — deduplication windows, quiet hours, suppression during gaming and focus sessions, and an hourly rate limit, with suppressed alerts accumulated into a digest.
+
+**Why**: putting etiquette logic inside each monitor scatters the same policy across many components and makes it inconsistent the moment one monitor is updated and another is not. It also couples detection correctness to delivery politeness — the stress tests that validate detection should not depend on whether an alert would have been polite to send. One layer, one policy.
+
+**Tradeoff**: urgency classification at the delivery boundary has to understand every alert type that flows through it, and a genuinely urgent alert misclassified as routine will be held during a suppression window. The digest guarantees it is delayed, never lost.
+
+---
+
+## Event-Driven Gaming Signal Over Heuristic Polling
+
+**Decision**: the primary way NEXUS learns a game session started is a signal emitted by the game's own launch command — a universal wrapper configured once per library, which also resolves the game's literal name from the store manifest. The process/VRAM heuristic that previously drove detection was demoted to a fallback for games launched outside the wrapper.
+
+**Why**: polling heuristics discover a game up to a minute late — after the game has already fought the local LLM for VRAM during its most sensitive phase, initial loading. The launcher knows the exact moment and the exact identity of the game; asking it is strictly better than inferring. It also eliminates per-game detection lists: any game launched through the wrapper is recognized by name with zero configuration.
+
+**Tradeoff**: the wrapper must be attached to each launcher (a one-time setup step), and games launched by other paths fall back to the slower heuristic — which is why the heuristic was kept rather than deleted.
+
+---
+
+## Fail-Closed Remote Authorization
+
+**Decision**: the remote channel's user allowlist rejects everyone when it is empty or unconfigured, instead of falling back to "anyone with the bot token may command the system."
+
+**Why**: the remote channel can read email summaries, speak with the user's cloned voice, and request power-state changes. A configuration accident (a missing environment variable, a fresh deployment) must degrade to *nobody gets in*, not *everybody does*. Fail-open authorization is only discovered after someone walks through the open door.
+
+**Tradeoff**: a misconfiguration locks the legitimate user out of the remote channel until fixed — an inconvenience that is loudly visible, which is exactly the failure mode to prefer.
+
+---
+
+## Generated Code Is Never Executed to Validate It
+
+**Decision**: validation of LLM-generated code is purely static — parsing and AST inspection that flags dynamic execution primitives and shell access — and the validation step has no code path that runs the generated program.
+
+**Why**: executing untrusted output in order to decide whether it is trustworthy inverts the trust order; the original import-based validation approach amounted to remote code execution triggered by a voice request. Static analysis answers "is this structurally safe to save?" without granting execution.
+
+**Tradeoff**: static analysis cannot prove runtime behavior — it catches the dangerous constructs, not every dangerous outcome. The generated file is saved for the user to run deliberately, which keeps a human in the execution path.
+
+---
+
+## The TTS Cache Only Trusts the Primary Voice
+
+**Decision**: the phrase cache is keyed by the full voice configuration (backend, voice, model), and only audio synthesized by the primary voice is ever persisted. Fallback audio is played but never cached. Short responses are cached opportunistically as they occur.
+
+**Why**: a cache that stores whatever was played converts a temporary outage into a permanent one — phrases synthesized by the fallback voice during a quota lapse would keep playing in the wrong voice long after the primary recovered. Caching is a cost optimization; it must never be allowed to change what the system sounds like.
+
+**Tradeoff**: during a primary-voice outage every response pays fallback synthesis cost with no cache benefit, and a configuration change invalidates the cache wholesale (a one-time re-synthesis cost). Both are prices worth paying for a cache that can never lie about the voice.
+
+---
+
+## Memory Promotion Instead of Memory Accumulation
+
+**Decision**: after each session, an LLM pass extracts durable facts and *promotes* them into one of two stores with different privileges: a small core store injected into the system prompt every session, and an archival store retrieved on demand. Everything else from the session stays in the ordinary session/vector logs. Secrets are redacted before anything persists.
+
+**Why**: injecting raw history into context does not scale and buries the few facts that actually matter (stable preferences, environment realities) under conversational noise. The valuable memory operation is deciding what deserves permanent, always-present status — that is a promotion decision, not a storage decision.
+
+**Tradeoff**: an extraction pass can promote a misunderstanding, which then colors every future session until corrected — so the core store is kept small, deduplicated, and inspectable on demand ("what do you know about me").

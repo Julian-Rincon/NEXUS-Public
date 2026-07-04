@@ -34,6 +34,20 @@ If screenshots or video demos are added to the `assets/` folder:
 - do not include terminal output showing API keys, token paths, or model paths
 - do not include voice samples that contain personal information
 
+## Security Hardening in the Private Implementation
+
+While the source is not published, the security posture of the system itself is part of what this repository documents:
+
+- **Fail-closed remote authorization** — an empty or missing allowlist on the remote channel rejects all users rather than admitting any
+- **Static-only validation of generated code** — LLM-generated code is analyzed via AST inspection and is never executed as part of validation
+- **Confirmation gating** — irreversible actions (mail, power state, process termination, network isolation) queue behind explicit confirmation with risk levels, expiry, and remote-channel tokens
+- **Protected-process whitelist** — defensive process termination can never target critical system processes
+- **Secret redaction before persistence** — API keys, tokens, JWTs, and credential-shaped strings are scrubbed from everything written to long-lived memory
+- **Cloned-voice usage audit** — every use of the cloned voice is logged (when, where, what — with content redacted), as a transparency and consent measure
+- **Passive-only security monitoring** — the security watcher detects and alerts; it never modifies the system unilaterally
+- **Least-privilege system helpers** — privileged operations (e.g., GPU power limits) go through narrow, argument-validated helpers rather than general-purpose elevated shells
+- **Credential file hygiene** — OAuth tokens and environment files are written with owner-only permissions
+
 ## Threat Model
 
 The primary risk this repository guards against is **capability cloning** — someone reading the source and deploying a functionally equivalent system without the original engineering investment.
