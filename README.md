@@ -109,7 +109,7 @@ The HUD is also resource-disciplined: the animated background scales its frame r
 
 ## Skills System
 
-36 capabilities are packaged as self-contained skills, auto-discovered at startup with no manual registration. Each skill declares its own triggers and handles its own execution context.
+38 capabilities are packaged as self-contained skills, auto-discovered at startup with no manual registration. Each skill declares its own triggers and handles its own execution context.
 
 Examples:
 
