@@ -30,7 +30,7 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 - **Development workflow automation** — runs test suites, reads logs, builds, restarts dev servers
 - **Natural-language code generation** — turns a spoken request into a statically validated Python file (generated code is never executed to validate it)
 - **Code triage** — diagnoses a pasted error or failed deploy, classifies severity, and briefs a fix — it never applies changes without permission
-- **Telegram remote control** — voice-note-first responses from anywhere
+- **Telegram remote control** — voice-note-first responses from anywhere, served by a dedicated always-on cloud host independent of the desktop
 - **Desktop HUD** — a native control center with live backend telemetry and a real-time conversation log, plus an on-screen "speaking" indicator whenever NEXUS talks
 - **Daily OS layer** — morning briefing, end-of-day summary, productivity metrics, daily priorities by voice
 - **Gaming mode v2** — enters the instant a game launches (signal from a universal launch wrapper, game name resolved from the store manifest — no hardcoded lists), applies per-game profiles (VRAM budget, GPU power limit, persistent shader cache), and restores everything on exit
@@ -67,7 +67,8 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 | Natural-language code generation | Active — spoken request → statically validated Python file; generated code is never executed during validation |
 | Code triage | Active — error/deploy diagnosis with severity classification; briefs the fix, never applies it unasked |
 | Guarded system power control | Active — lock is immediate; suspend/hibernate/shutdown/restart require explicit confirmation |
-| Telegram (voice-first) | Active — replies with voice note + text; fail-closed authorization (an empty allowlist rejects everyone) |
+| Telegram (voice-first) | Active — replies with voice note + text; fail-closed authorization (an empty allowlist rejects everyone); runs on a dedicated always-on cloud host, independent of the desktop's power state |
+| Cloud cost-safety cutoff | Active — usage guardrail on the cloud host warns, then automatically suspends the service before any free-tier limit would turn into a real charge |
 | Google Calendar | Active — natural language event creation and query, real video-call links |
 | Gmail | Active — send, reply, draft |
 | Google Drive | Active — list, read, create |
@@ -270,7 +271,7 @@ Every reply is sent as a voice note synthesized with the active TTS engine, foll
 - "say in the meeting: [message]" → speaks through the virtual mic
 - Anything else → conversational response with voice + text
 
-The wake word continues listening locally in the background while the Telegram bot is active — both channels run simultaneously.
+The bot now runs on a dedicated always-on cloud host, decoupled from the desktop — it keeps responding whether or not the desktop machine is powered on. The wake word remains a desktop-only capability and continues listening locally at the same time; both channels are always available simultaneously, now from two independent hosts instead of one.
 
 ---
 

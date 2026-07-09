@@ -47,6 +47,10 @@ While the source is not published, the security posture of the system itself is 
 - **Passive-only security monitoring** — the security watcher detects and alerts; it never modifies the system unilaterally
 - **Least-privilege system helpers** — privileged operations (e.g., GPU power limits) go through narrow, argument-validated helpers rather than general-purpose elevated shells
 - **Credential file hygiene** — OAuth tokens and environment files are written with owner-only permissions
+- **Least-privilege cloud identity** — the cloud host is administered through impersonation of a dedicated service account with a single, minimal role and no downloadable key; that identity deliberately has no billing or IAM access, so even full compromise of the automation cannot touch spending controls or permissions
+- **Scope-separated credentials per host** — the cloud host holds a read-only OAuth token for the services it needs (distinct from the desktop's read-write token), so a compromise there cannot be used to send mail or modify the calendar
+- **Key-only, network-restricted remote access** — the cloud host accepts SSH by key only (no password, no root login), over a private encrypted network rather than the public internet, with connection-rate banning on repeated failures; validated by an independent external port sweep and a live unauthorized-access attempt against the real host, not just a configuration review
+- **One-directional cross-host bridge** — the only state that ever crosses between the desktop and the cloud host flows one way, is read-only, and is always initiated by the desktop; the cloud host has no mechanism to push anything to, or execute anything on, the desktop
 
 ## Threat Model
 

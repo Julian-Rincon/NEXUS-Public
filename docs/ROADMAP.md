@@ -79,7 +79,12 @@
 - [x] Gaming-aware resource isolation — every local-model code path (LLM tier, NL classification fallback, memory embeddings) individually disabled during a detected game session, not just the main conversational route
 - [x] Gaming mode v2 — event-driven entry from a universal launch wrapper (second-zero detection, literal game name from the store manifest), per-game profiles (VRAM budget, GPU power limit, persistent shader cache), service CPU/IO weight reduction, heuristic fallback, session summary on exit
 - [x] VRAM crash resilience — headroom guard with proactive model eviction, capped local-model keep-alive and context residency (from a real exhaustion post-mortem)
-- [x] Over 900 automated tests kept green across every change
+- [x] Persistent cloud node for network-dependent subsystems — the messaging bot, email/calendar watcher, and LLM routing now run on a dedicated always-on host on a free-tier cloud provider, decoupled from the desktop machine being powered on; desktop-only capabilities (screen, audio, local model) stay on the desktop
+- [x] Automatic cost-safety cutoff — a monitoring guardrail on the cloud host tracks usage against the platform's free-tier limits and automatically suspends the service before any billable threshold is crossed, not just an alert; the cutoff itself retries until it actually succeeds and re-arms every billing cycle, rather than firing once and going silent
+- [x] Minimal cross-host state bridge — the one feature that needs a desktop-only capability (screen/audio) after being triggered remotely pulls its confirmation state from the cloud host over an existing, already-authenticated channel: read-only, desktop-initiated only, and adds no new inbound surface on the cloud host
+- [x] Live external security validation of the new cloud host — an independent network sweep and unauthorized-access attempt against the live host, not just a review of the firewall configuration
+- [x] Full skill-dispatch audit — systematic review of the entire skill registry's phrase-matching logic across every skill; found and fixed several cases where an overly broad skill silently intercepted a command meant for a different, more specific one, returning a plausible-looking but wrong response instead of a visible error
+- [x] Over 1250 automated tests kept green across every change
 
 ---
 

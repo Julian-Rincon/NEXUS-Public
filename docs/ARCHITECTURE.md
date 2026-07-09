@@ -171,7 +171,7 @@ Independent of the HUD window, a small animated **speaking indicator** appears o
 
 The bot responds voice-first: every reply is synthesized to an audio file using the same TTS pipeline and sent as a voice note, followed by the text. Natural language routing handles meeting URLs, email intents, and meeting speech without explicit commands.
 
-A wake word listener runs in a background thread simultaneously with the bot — the local voice interface and Telegram both remain active at once.
+The bot itself now runs on a dedicated cloud host (see "Cloud/Desktop Split" below), independent of the desktop machine's power state. A wake word listener still runs in a background thread on the desktop — the local voice interface and Telegram both remain active at once, now from two independent hosts instead of one process.
 
 ### MeetingAgent
 
@@ -304,6 +304,16 @@ On entering gaming mode:
 7. Non-urgent alerts are suppressed by the Heartbeat and digested for after the session
 
 Everything restores automatically when the game session ends, and NEXUS announces the session summary — game name and duration.
+
+### Cloud/Desktop Split
+
+The system now runs as two coordinated hosts rather than one. The split follows a single rule: anything that is 100% network-dependent (the messaging bot, the email/calendar watcher, LLM routing) moved to a dedicated always-on cloud host; anything that needs real desktop hardware (microphone, speakers, screen, GPU, the local model tier) stays on the desktop.
+
+**The two hosts are asymmetric on purpose.** The cloud host is minimally privileged: its identity has no billing or permissions access, its Google credentials are read-only, and it has no mechanism to reach the desktop at all — it cannot push a command, open a connection, or otherwise act on the desktop machine. The one feature that spans both (attending a meeting after being told to via the remote channel, which needs desktop-only screen/audio capability to execute) is bridged by the desktop *pulling* its own confirmation state from the cloud host on a short interval, over a channel that already existed for administration — read-only, desktop-initiated, and adding no new inbound surface on the cloud side. If the cloud host were ever compromised, it could not use that compromise to act on the desktop.
+
+**Cost safety is enforced, not just monitored.** A guardrail on the cloud host tracks network usage against the hosting platform's free-tier limit and escalates in two stages: a warning once usage crosses a soft threshold, then an automatic service suspension if usage keeps climbing toward the limit. The cutoff is not fire-and-forget — if the suspend attempt itself fails, it retries on the next check rather than assuming success, and it re-arms automatically at the start of each billing cycle.
+
+**The migration was validated the same way the rest of the system is** — a live cutover, then live-fire testing at increasing levels of adversarial intent: concurrent-load testing against the real deployment (a real, reproducible race condition was found and fixed this way, in a code path unrelated to the migration itself), then an external network sweep and a real unauthorized-access attempt against the live host, not just a review of the intended configuration.
 
 ---
 
