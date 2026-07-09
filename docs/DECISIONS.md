@@ -36,7 +36,7 @@
 
 **Why**: models hallucinate when asked to perform operations they cannot actually execute. Deterministic paths are faster, more reliable, and do not consume tokens.
 
-**Tradeoff**: the routing layer must be maintained as new capabilities are added. Missing a pattern sends the request to the LLM instead, which may respond correctly but with higher latency.
+**Tradeoff**: the routing layer must be maintained as new capabilities are added, and a first-match-wins dispatch model means an overly broad pattern in one route can silently intercept a request meant for a different, more specific one — the failure mode is not always "falls through to the LLM with higher latency," it can be "a different, wrong deterministic path answers confidently." A full audit of every route's matching logic found and fixed several of these; it is now a standing category of bug to check for whenever a new pattern is added, not just a one-time cleanup.
 
 ---
 
@@ -177,3 +177,23 @@
 **Why**: injecting raw history into context does not scale and buries the few facts that actually matter (stable preferences, environment realities) under conversational noise. The valuable memory operation is deciding what deserves permanent, always-present status — that is a promotion decision, not a storage decision.
 
 **Tradeoff**: an extraction pass can promote a misunderstanding, which then colors every future session until corrected — so the core store is kept small, deduplicated, and inspectable on demand ("what do you know about me").
+
+---
+
+## A Pull-Based Bridge Instead of a Command Channel Between Hosts
+
+**Decision**: when the cloud/desktop split (see Architecture) left exactly one feature needing both a remote trigger and a desktop-only capability to complete, the fix was a narrow, read-only, desktop-initiated pull of a single piece of state — not a general-purpose channel for the cloud host to send commands to the desktop.
+
+**Why**: a general command channel would have solved this one case and every future one like it, but it also means a compromised cloud host could act on the desktop directly. The desktop already reaches the cloud host to administer it, so extending that existing, already-authenticated, one-directional path costs almost nothing extra and adds zero new inbound surface on the cloud side. The generality of a full command API was not worth trading away that property for a single feature.
+
+**Tradeoff**: any future feature with the same shape — triggered remotely, executed locally — needs its own purpose-built bridge rather than reusing a generic mechanism. That is more code over time if the pattern recurs often, in exchange for a system where the lower-trust host structurally cannot command the higher-trust one.
+
+---
+
+## Automatic Cost Cutoff Instead of Alert-Only Monitoring
+
+**Decision**: the cloud host's usage guardrail does not stop at sending an alert when nearing a free-tier limit — past a second, higher threshold, it suspends the service itself, automatically.
+
+**Why**: an alert assumes someone is watching and can act in time. A guardrail whose only job is to prevent an unexpected charge should not depend on that. Suspension is the one action that makes the outcome (no charge) certain regardless of whether the alert is seen.
+
+**Tradeoff**: a false-positive reading, or ordinary heavy use late in a billing cycle, can take the service offline earlier than strictly necessary — trading a small amount of legitimate availability for a hard guarantee against unexpected billing. The cutoff also has to be trustworthy itself: an early version silently gave up after a single failed suspend attempt, so it now retries on every subsequent check until suspension actually succeeds, rather than assuming the first attempt worked.
