@@ -35,7 +35,8 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 - **Daily OS layer** — morning briefing, end-of-day summary, productivity metrics, daily priorities by voice
 - **Gaming mode v2** — enters the instant a game launches (signal from a universal launch wrapper, game name resolved from the store manifest — no hardcoded lists), applies per-game profiles (VRAM budget, GPU power limit, persistent shader cache), and restores everything on exit
 - **Self-managed long-term memory** — after each session, durable facts are extracted and promoted into a persistent user profile or a searchable archive
-- **Guarded system power control** — can lock, suspend, hibernate, shut down, or restart the machine by voice, gated behind an explicit confirmation step
+- **Guarded system power control** — can lock, suspend, hibernate, shut down, or restart the machine by voice, gated behind an explicit confirmation step, and relayed over a command-restricted channel to the desktop when issued from the remote host
+- **Local model fine-tuning** — a QLoRA pipeline fine-tunes the on-device model against real, redacted usage history to sharpen tone and skill-routing, pausing and checkpointing automatically around gaming sessions and never touching the production model without a manual review-and-approve step
 
 ---
 
@@ -66,8 +67,9 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 | Dev workflow automation | Active — test runner detection, log triage, build, server restart |
 | Natural-language code generation | Active — spoken request → statically validated Python file; generated code is never executed during validation |
 | Code triage | Active — error/deploy diagnosis with severity classification; briefs the fix, never applies it unasked |
-| Guarded system power control | Active — lock is immediate; suspend/hibernate/shutdown/restart require explicit confirmation |
+| Guarded system power control | Active — lock is immediate; suspend/hibernate/shutdown/restart require explicit confirmation; requests from the remote host reach the desktop over a dedicated, command-restricted relay channel authorized for exactly five actions and nothing else |
 | Telegram (voice-first) | Active — replies with voice note + text; fail-closed authorization (an empty allowlist rejects everyone); runs on a dedicated always-on cloud host, independent of the desktop's power state |
+| Local model fine-tuning | Active (pipeline) — QLoRA over the on-device model using real, redacted usage history; gaming-aware pause/checkpoint/resume; before/after comparison required before any production swap, which stays a manual step |
 | Cloud cost-safety cutoff | Active — usage guardrail on the cloud host warns, then automatically suspends the service before any free-tier limit would turn into a real charge |
 | Google Calendar | Active — natural language event creation and query, real video-call links |
 | Gmail | Active — send, reply, draft |
@@ -259,6 +261,8 @@ NEXUS can lock the screen, suspend, hibernate, shut down, or restart the machine
 
 This mirrors the general design principle across the system: irreversible or disruptive actions never fire on a single ambiguous phrase.
 
+Power commands issued from the remote (cloud) host are relayed to the desktop over a dedicated channel authorized for exactly five hard-coded actions and nothing else — the credential behind it cannot open an interactive shell. Rolling this out surfaced a real gap: the host platform's own SSH feature was granting full, unrestricted shell access that bypassed the intended restriction entirely, undetected until an explicit audit. It was disabled the same day, before the relay carried any real traffic. Restricted-command channels get audited for exactly this class of bypass now.
+
 ---
 
 ## Telegram Remote Control
@@ -300,6 +304,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full breakdown.
 |---|---|
 | Assistant | Orchestrates STT → LLM → actions → TTS, manages state |
 | TieredBrain | Five-level LLM with circuit breaker, token streaming, and per-backend telemetry |
+| Local fine-tuning pipeline | QLoRA over the on-device model against redacted real usage; gaming-aware pause/resume; required comparison step before production |
 | ConnectionSentinel | Health checks across every external provider; alerts on state changes only |
 | Voice | Capture, barge-in VAD, custom wake word with STT verification, primary + fallback TTS |
 | Skills | 38 auto-discovered skill plugins |
@@ -346,6 +351,8 @@ See [docs/DECISIONS.md](docs/DECISIONS.md). The most consequential:
 - **Native desktop HUD over a web frontend** — a native control surface that integrates with the system tray and window manager, rather than a browser-hosted interface
 - **Virtual mic via system audio routing** — audio synthesized and routed through a loopback device, appearing as a real mic to meeting software
 - **GPU-aware gaming mode** — proactive VRAM release and thermal management; NEXUS stays useful during gaming sessions without competing for resources
+- **Least-privilege remote command relay** — the remote host can request exactly five hard-coded power actions on the desktop and nothing else; a platform-level SSH feature was found granting broader access than intended during rollout and was disabled the same day, before it carried real traffic
+- **Fine-tuning never auto-promotes** — the local training pipeline produces a candidate model and a required before/after comparison; swapping it into production stays a manual, reviewed step, never automatic
 
 ---
 
@@ -379,6 +386,8 @@ See [docs/ROADMAP.md](docs/ROADMAP.md).
 - Gaming mode v2 — instant launch signal, per-game profiles (VRAM budget, GPU power, shader cache), automatic restore
 - Crash resilience after a real-world VRAM exhaustion incident — VRAM headroom guard, capped local-model residency, singleton remote bot
 - Auto-start on login
+- Remote power control moved to a dedicated command-restricted relay channel, closing a real host-platform SSH gap found during rollout
+- Local QLoRA fine-tuning pipeline for the on-device model — dataset build, gaming-aware training, GGUF export, and a required before/after comparison step ahead of any production swap
 
 **Planned:**
 - Home automation entity auto-discovery
@@ -386,6 +395,7 @@ See [docs/ROADMAP.md](docs/ROADMAP.md).
 - Global dictation (hotkey → STT → types anywhere)
 - Deep research agent for long-running investigations
 - Deeper multi-agent delegation over the exposed MCP tools
+- A reasoning/self-refinement pass ahead of complex answers
 
 ---
 
@@ -402,7 +412,7 @@ This repository contains no source code, credentials, personal data, or operatio
 This project demonstrates:
 
 - **Systems integration** across voice, multi-provider LLM routing, vision, browser automation, system audio and video devices, cast devices, and the Linux desktop
-- **Production discipline** — not a demo; a tool used and maintained daily for real tasks, running as an always-on background service, with **over 900 automated tests** kept green across every change
+- **Production discipline** — not a demo; a tool used and maintained daily for real tasks, running as an always-on background service, with **over 4,800 automated tests** kept green across every change
 - **LLM engineering** — five-tier routing, streaming, circuit breakers, live telemetry, prompt/context management, top-K tool retrieval against context rot, NL normalization without LLM dependency
 - **Plugin architecture** — 38 self-contained skills with auto-discovery; adding a new capability requires one file
 - **Safety-conscious design** — confirmation gating for irreversible actions, allowlisted automation, fail-closed remote authorization, static-only validation of generated code, passive-only security monitoring that never acts unilaterally

@@ -26,6 +26,7 @@
 - [x] Episodic memory — causal event log, queryable by day/week
 - [x] Managed long-term memory — durable facts extracted post-session, promoted to a core profile (system prompt) or searchable archive, with dedup
 - [x] Aggressive local-tier timeouts with circuit breaking, so a slow or cold local model never blocks a response for long
+- [x] Local fine-tuning pipeline for the on-device model — dataset build from real, redacted usage history, QLoRA training with gaming-aware pause/checkpoint/resume, GGUF export, and a required before/after comparison; promoting the result to production is a manual step, never automatic
 
 ### Operator interface
 - [x] Native desktop HUD — live system metrics, system tray integration
@@ -66,6 +67,8 @@
 - [x] Confirmation-gated active defense — process kill and network isolation behind explicit confirmation, with a protected-process whitelist; network restore is immediate
 - [x] Secret redaction before persistence — keys, tokens, and credential-shaped strings scrubbed from everything written to memory
 - [x] Cloned-voice usage audit — every use of the cloned voice logged with redacted content
+- [x] Least-privilege remote power relay — the cloud host reaches the desktop over a channel authorized for exactly five hard-coded power actions and nothing else; found and closed a platform-level SSH feature that had been granting broader access than intended, the same day it was discovered, before it carried real traffic
+- [x] Wake word follow-up hardening — the no-wake-word grace window after a response was shortened and then removed after live false triggers (ambient speech executed as a command); every turn now requires the wake word again, plus a filter for STT hallucination on silence
 
 ### Multi-tool exposure
 - [x] MCP server exposing core capabilities as tools for external AI clients
@@ -84,7 +87,7 @@
 - [x] Minimal cross-host state bridge — the one feature that needs a desktop-only capability (screen/audio) after being triggered remotely pulls its confirmation state from the cloud host over an existing, already-authenticated channel: read-only, desktop-initiated only, and adds no new inbound surface on the cloud host
 - [x] Live external security validation of the new cloud host — an independent network sweep and unauthorized-access attempt against the live host, not just a review of the firewall configuration
 - [x] Full skill-dispatch audit — systematic review of the entire skill registry's phrase-matching logic across every skill; found and fixed several cases where an overly broad skill silently intercepted a command meant for a different, more specific one, returning a plausible-looking but wrong response instead of a visible error
-- [x] Over 1250 automated tests kept green across every change
+- [x] Over 4800 automated tests kept green across every change
 
 ---
 
@@ -108,6 +111,9 @@ Long-running multi-step investigations that search, read, and synthesize across 
 
 **Deeper MCP delegation**
 Expose more granular tools over the existing MCP server so specialized external agents (research, coding) can be delegated sub-tasks without overloading the main conversational LLM.
+
+**Reasoning / self-refinement pass**
+A dedicated reasoning step ahead of complex answers, separate from the fine-tuning work above — improving the model's behavior and improving how it thinks through a hard question are treated as two independent subsystems.
 
 ### Longer term
 
