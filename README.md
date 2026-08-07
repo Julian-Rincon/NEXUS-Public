@@ -1,9 +1,44 @@
-# NEXUS
+<div align="center">
 
-> **Portfolio showcase** — public documentation of a private project.
-> Source code, credentials, and operational details are intentionally excluded.
+<img src="assets/banner.svg" alt="NEXUS — local-first personal AI system" width="100%" />
+
+<sub>Portfolio showcase — public documentation of a private project.<br/>Source code, credentials, and operational details are intentionally excluded.</sub>
+
+<br/><br/>
+
+![Tests](https://img.shields.io/badge/tests-4%2C800%2B%20passing-ff1616?style=for-the-badge&labelColor=050001)
+![Status](https://img.shields.io/badge/status-daily%20driver-ff1616?style=for-the-badge&labelColor=050001)
+![Skills](https://img.shields.io/badge/skills-38%20auto--discovered-ff1616?style=for-the-badge&labelColor=050001)
+![LLM%20tiers](https://img.shields.io/badge/LLM%20tiers-5%20with%20failover-ff1616?style=for-the-badge&labelColor=050001)
+
+</div>
+
+---
 
 A local-first, production-grade personal AI system built for real daily use on Linux (Fedora / KDE Plasma). Voice-driven, autonomous, and always running — it manages the machine, not just conversation.
+
+<div align="center">
+<img src="assets/nexus_hud.png" alt="NEXUS desktop HUD, a real screenshot of the live command center" width="820" />
+
+<sub>The actual HUD, mid-boot, on the machine it runs on every day — not a mockup.</sub>
+</div>
+
+---
+
+## For Employers and Reviewers
+
+This project demonstrates:
+
+- **Systems integration** across voice, multi-provider LLM routing, vision, browser automation, system audio and video devices, cast devices, and the Linux desktop
+- **Production discipline** — not a demo; a tool used and maintained daily for real tasks, running as an always-on background service, with **over 4,800 automated tests** kept green across every change
+- **LLM engineering** — five-tier routing, streaming, circuit breakers, live telemetry, prompt/context management, top-K tool retrieval against context rot, NL normalization without LLM dependency
+- **Plugin architecture** — 38 self-contained skills with auto-discovery; adding a new capability requires one file
+- **Safety-conscious design** — confirmation gating for irreversible actions, allowlisted automation, fail-closed remote authorization, static-only validation of generated code, passive-only security monitoring that never acts unilaterally
+- **Operational maturity** — real incidents (a VRAM-exhaustion crash, an over-permissive SSH channel found during a security audit) were root-caused and converted into permanent guards rather than patched around
+- **Product thinking** — the desktop HUD, the Daily OS layer, and the gaming mode are deliberate UX choices, not cosmetic additions
+- **Security awareness** — explicit about what is and is not published, and why
+
+A live guided walkthrough of the private implementation is available on request.
 
 ---
 
@@ -40,7 +75,9 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 
 ---
 
-## Capability Overview
+<details>
+<summary><strong>Full capability reference — status table (click to expand)</strong></summary>
+<br/>
 
 | Capability | Status |
 |---|---|
@@ -90,13 +127,13 @@ NEXUS is used daily as an actual productivity and system-management layer, not a
 | Gaming mode v2 | Active — instant launch signal + per-game profiles (VRAM budget, GPU power, shader cache), heuristic detection as fallback |
 | Auto-start on login | Active — background service, starts with the desktop session |
 
+</details>
+
 ---
 
 ## Desktop HUD
 
-A single-panel operator console that runs alongside the voice pipeline — void-black background, blood-red accents, an animated red "digital rain" effect behind the panel.
-
-![NEXUS desktop HUD](assets/nexus_hud.png)
+A single-panel operator console that runs alongside the voice pipeline — void-black background, blood-red accents, an animated red "digital rain" effect behind the panel. See the real screenshot at the top of this page.
 
 **What it shows:**
 - Title, tagline, and a small tag line naming the active stack
@@ -300,6 +337,10 @@ Detection and delivery are deliberately separate concerns. Everything above only
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full breakdown.
 
+<details>
+<summary><strong>Module map (click to expand)</strong></summary>
+<br/>
+
 | Module area | Purpose |
 |---|---|
 | Assistant | Orchestrates STT → LLM → actions → TTS, manages state |
@@ -333,6 +374,8 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full breakdown.
 | Task tracker | Persistent tasks with deadline and priority |
 | ProactiveMonitor | Background daemon for alerts, briefings, and gaming detection |
 
+</details>
+
 ---
 
 ## Technical Decisions
@@ -360,7 +403,10 @@ See [docs/DECISIONS.md](docs/DECISIONS.md). The most consequential:
 
 See [docs/ROADMAP.md](docs/ROADMAP.md).
 
-**Completed:**
+<details>
+<summary><strong>Completed (click to expand)</strong></summary>
+<br/>
+
 - Streaming pipeline with barge-in interrupt and a custom-trained wake word (with STT double-verification against false triggers)
 - Five-tier TieredBrain with circuit breaker and live per-backend telemetry
 - Connection sentinel — health checks across every external provider, alerts on state changes
@@ -389,6 +435,8 @@ See [docs/ROADMAP.md](docs/ROADMAP.md).
 - Remote power control moved to a dedicated command-restricted relay channel, closing a real host-platform SSH gap found during rollout
 - Local QLoRA fine-tuning pipeline for the on-device model — dataset build, gaming-aware training, GGUF export, and a required before/after comparison step ahead of any production swap
 
+</details>
+
 **Planned:**
 - Home automation entity auto-discovery
 - Finance agent integration with a personal budgeting tool
@@ -404,23 +452,6 @@ See [docs/ROADMAP.md](docs/ROADMAP.md).
 See [docs/SECURITY.md](docs/SECURITY.md).
 
 This repository contains no source code, credentials, personal data, or operational automation details. The private implementation handles sensitive personal and professional context — that is exactly why the source is not published.
-
----
-
-## For Employers and Reviewers
-
-This project demonstrates:
-
-- **Systems integration** across voice, multi-provider LLM routing, vision, browser automation, system audio and video devices, cast devices, and the Linux desktop
-- **Production discipline** — not a demo; a tool used and maintained daily for real tasks, running as an always-on background service, with **over 4,800 automated tests** kept green across every change
-- **LLM engineering** — five-tier routing, streaming, circuit breakers, live telemetry, prompt/context management, top-K tool retrieval against context rot, NL normalization without LLM dependency
-- **Plugin architecture** — 38 self-contained skills with auto-discovery; adding a new capability requires one file
-- **Safety-conscious design** — confirmation gating for irreversible actions, allowlisted automation, fail-closed remote authorization, static-only validation of generated code, passive-only security monitoring that never acts unilaterally
-- **Operational maturity** — a real VRAM-exhaustion crash was root-caused and converted into permanent guards (headroom monitoring, capped model residency, process singletons) rather than patched around
-- **Product thinking** — the desktop HUD, the Daily OS layer, and the gaming mode are deliberate UX choices, not cosmetic additions
-- **Security awareness** — explicit about what is and is not published, and why
-
-A live guided walkthrough of the private implementation is available on request.
 
 ---
 

@@ -1,0 +1,45 @@
+<svg viewBox="0 0 1200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NEXUS — local-first personal AI system">
+  <defs>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff2020" stop-opacity="0"/>
+      <stop offset="55%" stop-color="#ff2020" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#ff2020" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="18%" cy="35%" r="75%">
+      <stop offset="0%" stop-color="#1a0303"/>
+      <stop offset="100%" stop-color="#050001"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="220" fill="url(#vignette)"/>
+
+  <!-- sparse background glyph field, echoes the HUD's live console texture -->
+  <g fill="#ff1616" opacity="0.14" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace" font-size="13">
+    <text x="742" y="26">01001110</text>
+    <text x="905" y="52">λ</text>
+    <text x="1040" y="34">Σ</text>
+    <text x="812" y="88">0x7F3A</text>
+    <text x="960" y="112">::</text>
+    <text x="1088" y="80">10110</text>
+    <text x="760" y="150">→</text>
+    <text x="1120" y="150">GET</text>
+    <text x="880" y="178">κ</text>
+    <text x="1000" y="196">0xE21</text>
+    <text x="700" y="196">/dev/tty</text>
+  </g>
+
+  <!-- wordmark -->
+  <text x="60" y="112" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace" font-weight="700" font-size="72" letter-spacing="14" fill="#ff1616">NEXUS</text>
+
+  <!-- underline rule -->
+  <rect x="62" y="132" width="640" height="3" fill="url(#fade)"/>
+
+  <!-- tagline -->
+  <text x="60" y="164" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace" font-size="17" letter-spacing="1.5" fill="#b06a6a">LOCAL-FIRST · VOICE-DRIVEN · ALWAYS RUNNING</text>
+
+  <!-- corner ticks, matching the HUD frame's stray coordinate marks -->
+  <g stroke="#ff1616" stroke-width="1" opacity="0.5">
+    <path d="M20 20 h18 M20 20 v18"/>
+    <path d="M1180 200 h-18 M1180 200 v-18"/>
+  </g>
+</svg>
