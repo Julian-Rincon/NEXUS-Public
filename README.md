@@ -25,6 +25,12 @@ A local-first, production-grade personal AI system built for real daily use on L
 
 ---
 
+## Why I Built This
+
+Not a class project, not a portfolio checkbox — NEXUS runs on my machine every day, and I run my day through it. When something breaks, I fix it before I do anything else, because I'm actually the one who depends on it working. Every capability in this document exists because I hit a real wall doing something I actually needed, and built through it instead of settling for "good enough." That's the standard the whole system is held to, not a demo-day standard.
+
+---
+
 ## For Employers and Reviewers
 
 This project demonstrates:
