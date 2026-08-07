@@ -17,6 +17,8 @@
 
 A local-first, production-grade personal AI system built for real daily use on Linux (Fedora / KDE Plasma). Voice-driven, autonomous, and always running — it manages the machine, not just conversation.
 
+**TL;DR:** multi-provider LLM routing, 38 self-discovered skills (voice, home automation, calendar/email, security monitoring), hybrid local/cloud deployment, and an MCP server exposing it all to other AI agents. Closed-source (finances and home systems run through it); this repo is the architecture writeup, not the code.
+
 <div align="center">
 <img src="assets/nexus_hud.png" alt="NEXUS desktop HUD, a real screenshot of the live command center" width="820" />
 
