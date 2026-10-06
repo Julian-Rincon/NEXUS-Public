@@ -2,118 +2,141 @@
 
 <img src="assets/banner.svg" alt="NEXUS — personal AI assistant" width="100%" />
 
-<sub>Portfolio showcase — public documentation of a private project.<br/>Credentials and personal data are intentionally excluded.</sub>
+<sub>Public showcase of a private project. Source code, credentials and personal data are intentionally excluded.<br/>Every screenshot and terminal capture below comes from the running system.</sub>
 
 <br/><br/>
 
 ![Version](https://img.shields.io/badge/version-v2%20·%20Oct%202026-ff1616?style=for-the-badge&labelColor=050001)
-![Runs on](https://img.shields.io/badge/runs%20on-Phantom%20(multi--agent)-ff1616?style=for-the-badge&labelColor=050001)
-![Interface](https://img.shields.io/badge/interface-MCP-ff1616?style=for-the-badge&labelColor=050001)
-![Footprint](https://img.shields.io/badge/footprint-~700%20lines%20·%20no%20sudo-ff1616?style=for-the-badge&labelColor=050001)
+![Platform](https://img.shields.io/badge/runs%20on-Phantom%20·%20Fedora%20KDE-ff1616?style=for-the-badge&labelColor=050001)
+![Tests](https://img.shields.io/badge/tests-110%20NEXUS%20·%2013k%2B%20Phantom-ff1616?style=for-the-badge&labelColor=050001)
+![Root](https://img.shields.io/badge/root%20access-none-ff1616?style=for-the-badge&labelColor=050001)
 
 </div>
 
 ---
 
-NEXUS is my personal AI assistant on Linux (Fedora / KDE Plasma). Since v2 it is **not a standalone app**: it is the personal layer that lives inside **[Phantom](https://github.com/Julian-Rincon/phantom)**, my multi-agent workbench (a fork of Codeg that runs Claude Code, OpenCode and Hermes side by side).
+## In one paragraph
 
-**TL;DR:** Phantom provides the UI, the agents, the models, permissions, scheduling, voice and a desktop "island". NEXUS provides what Phantom doesn't have: knowledge of my day (calendar, mail, tasks, services), initiative (a guaranteed daily briefing), and an identity of its own, including its own voice. It's exposed to every agent through one MCP server.
+NEXUS is my personal AI assistant. It plans my day, talks with a voice of its own, remembers what matters across every AI agent I use, and watches all my code repositories so a broken test gets fixed, reviewed and merged without me asking. It is not a standalone app: it is a small personal layer (~1,900 lines of Python plus tests) on top of **[Phantom](https://github.com/Julian-Rincon/phantom)**, my multi-agent workbench that runs Claude Code, OpenCode and Hermes side by side. Phantom provides the agents, models, UI and voice. NEXUS provides context, memory and initiative.
+
+<div align="center">
+<img src="assets/v2/nexus-in-phantom.png" alt="NEXUS answering inside its own workspace in Phantom" width="900" />
+<br/><sub>NEXUS answering in its own Phantom workspace: identity, a model chosen from measured data, and a live service check. The 🔊 icon reads any answer aloud in the agent's voice.</sub>
+</div>
 
 ---
 
-## Why v2 exists
+## What it does
 
-The first NEXUS was a 47k-line Python monolith. I built every layer myself: a router across five LLM providers, an always-listening wake word, a Qt HUD, a sudo-powered gaming mode, auto-start and a self-healing loop every 30 seconds.
+| Capability | How it works |
+|---|---|
+| **Daily briefing** | Every morning a Phantom automation reads my calendar, inbox, tasks and services and sends three priorities to Telegram and the desktop. Two `systemd` timers guarantee delivery: if the run fails (for example, a free model runs out of quota), it is re-run on another agent. |
+| **Talk to it** | A global shortcut (Meta+N) records, transcribes locally (Whisper on the GPU) and answers out loud. Pressing it again stops the answer, so two replies never overlap. Voice also works in the app on the phone and through Telegram voice notes. |
+| **A voice per agent** | NEXUS speaks with its own voice, generated locally with Chatterbox. The other agents each have a distinct voice. English technical terms inside Spanish sentences are pronounced correctly. |
+| **Shared memory** | One memory store (SQLite with full-text search) exposed over MCP, so Claude, OpenCode and Hermes all read and write the same facts. |
+| **Project copilot** | Watches **every** repository I have, including new ones, automatically. When a commit breaks the tests, an agent fixes it in an isolated git worktree, Claude reviews the diff and re-runs the tests, and only then is it merged. |
+| **Model routing by evidence** | NEXUS never hard-codes a provider. It asks Phantom's scorecard, which ranks agent/model pairs by their measured error rates on my own history. |
+| **Always-on watchdog** | A dependency-free Python service on a free-tier cloud VM. It alerts me when a service goes down, and when my PC is off it sends the briefing and answers basic Telegram commands. |
+| **Phone access** | Phantom (chat, voice and agents) is reachable from my phone over a private Tailscale network with HTTPS. Nothing is exposed to the public internet. |
 
-**It never became reliable enough to depend on.** Free and academic LLM endpoints kept expiring, so the router needed constant care. The always-on microphone was fragile. Above all, it fought the operating system: it wrote kernel settings, rewrote its own autostart and ran root helpers. When it misbehaved, it was hard to even turn off.
+---
 
-v2 is the lesson applied. **Compose instead of rebuild:**
+## Evidence
 
-| Concern | v1 (own implementation) | v2 |
-|---|---|---|
-| Choosing a model | 5-tier router with circuit breakers | Phantom's **measured scorecard** (error rates from my own history, Wilson 95% bound) |
-| Agents & UI | Custom HUD + Telegram bot | Phantom: app, desktop island, Telegram channel |
-| Scheduling | In-process timers | Phantom automations (cron) + `systemd --user` timers |
-| Voice | Always-on wake word | Push-to-talk in Phantom, a distinct voice per agent |
-| System tuning | sudo helpers, sysctl, ACPI profiles | None — GameMode/PowerDevil already do it natively |
-| Size | ~47,000 lines | ~700 lines + tests |
+### The copilot fixing a real failing test
 
-The v1 code is preserved in the private repo's history (tag `v1-final`). Its docs are archived in [`docs/v1/`](docs/v1/).
+A repository with a broken function. One commit later, an agent fixed it in a separate worktree, Claude reviewed and approved it, the tests went green and the fix landed on `main`. That took 45 seconds, and no build artifacts were committed.
+
+<div align="center"><img src="assets/v2/copilot.png" alt="Terminal: copilot fixes a failing test and merges after review" width="760" /></div>
+
+### Memory shared across different agents
+
+To prove the agents really share memory (and that one isn't just guessing), a random number is generated. One agent (Claude Code) stores it, and a different agent (Hermes, a different model from a different provider) retrieves it.
+
+<div align="center"><img src="assets/v2/shared-memory.png" alt="Terminal: Claude stores a random code and Hermes retrieves it" width="760" /></div>
+
+### Native to the desktop
+
+NEXUS notifications show up as a first-class app in KDE Plasma, so they can be silenced or configured like any other app. The "island" at the top of the screen shows which agents are working right now.
+
+<div align="center">
+<img src="assets/v2/notification.png" alt="Native KDE Plasma notification from NEXUS" width="420" />
+&nbsp;&nbsp;
+<img src="assets/v2/island.png" alt="Desktop island showing active agents" width="420" />
+</div>
+
+### Every deploy verifies itself
+
+The deploy script installs, restarts and then checks twelve things on its own: services, Telegram, model routing, all four voices (including that NEXUS uses its own voice and not the fallback) and the test suite.
+
+<div align="center"><img src="assets/v2/deploy-check.png" alt="Terminal: deploy script verification, 12 of 12 checks passing" width="640" /></div>
 
 ---
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    subgraph Interfaces
+        A[Desktop app]
+        B[Desktop island]
+        C[Telegram]
+        D[Phone · Tailscale]
+        E[Meta+N voice]
+    end
+    subgraph Phantom["Phantom (multi-agent workbench)"]
+        F[Claude Code · OpenCode · Hermes]
+        G[Model scorecard]
+        H[Automations · worktrees · permissions]
+        I[Local voice: Whisper + Chatterbox]
+    end
+    subgraph NEXUS["NEXUS (personal layer)"]
+        J[nexus-mcp tools]
+        K[(Shared memory)]
+        L[Project copilot]
+        M[Briefing guarantee timers]
+    end
+    N[Free-tier cloud watchdog]
+    A & B & C & D & E --> Phantom
+    F -- MCP --> J
+    J --> K
+    L -- git hooks --> H
+    M --> H
+    N -. PC off .-> C
 ```
- Telegram ─┐
- Island  ──┼──▶ PHANTOM  (local server, 127.0.0.1)
- App     ──┤      agents: Claude Code · OpenCode · Hermes
- Voice   ──┘      automations · worktrees · permissions · model scorecard
-                          │  MCP (stdio)
-                          ▼
-                 nexus-mcp — personal tools, no LLM of its own
-                 ├─ nexus_agenda     Google Calendar API (all visible calendars)
-                 ├─ nexus_mail       Gmail API, headers only — never message bodies
-                 ├─ nexus_tasks      personal task store
-                 ├─ nexus_pipeline   health of my internship-pipeline service
-                 ├─ nexus_notify     Telegram + native Plasma notification
-                 └─ nexus_route      best agent/model for a task category
-```
 
-- **NEXUS has its own space in Phantom.** That's a folder whose `CLAUDE.md`/`AGENTS.md` define the persona. Any agent opened there *is* NEXUS, and my Telegram chat lands there by default.
-- **Every agent gets the same tools.** Claude Code, OpenCode and Hermes all have `nexus-mcp` registered.
+**Design principles**
+- **Compose, don't rebuild.** Agents, UI, scheduling and voice already exist in Phantom; NEXUS only adds what is personal.
+- **Nothing invasive.** No root, no kernel tweaks, no self-installed autostart. On the desktop everything is event-driven (git hooks, path watchers, timers) instead of polling; every piece is a user-level service that is removed by deleting it.
+- **Read-only where it can be.** Calendar and mail are read-only, and from mail NEXUS reads headers only, never message bodies.
+- **Human-gated where it matters.** The copilot never pushes and never force-merges. If I have unsaved changes in the same files, or a merge conflicts, it stops and tells me.
+- **Tests never touch the real machine.** Every fake raises on any call it did not expect, so a test can't silently send a real message or open a real browser.
 
 ---
 
-## What it does today
+## Why v2 exists
 
-- **Daily briefing at 8:30.** A Phantom automation asks the best-measured model to read my day and send a short brief with schedule, three priorities and alerts, to Telegram and the desktop.
-- **Delivery guarantee.** Two native `systemd --user` timers back it up:
-  - **8:20:** re-picks the model from live measurements.
-  - **8:45:** if no briefing succeeded today, re-runs it on a different agent.
-  - The check timer is `Persistent`, so if the laptop was off it runs at boot.
-  - This exists because on launch day the free tier of the default model ran out of quota mid-morning.
-- **Talk to it anywhere.** From the Phantom app, the desktop island, or Telegram. In Telegram, `/menu` lists recent conversations as buttons, so I can jump into any agent session and back.
-- **A voice per agent.** NEXUS speaks with its own cloned voice, generated locally with Chatterbox on the GPU. The other agents use distinct local voices.
-  - Technical English inside Spanish sentences (pipeline, deploy, API) is normalized so it's pronounced correctly.
-  - If the GPU voice service is down, speech falls back to a CPU voice instead of going silent.
-- **Native identity on the desktop.** Notifications arrive as "NEXUS" with an icon, and can be configured in Plasma's own settings like any app.
+The first NEXUS was a 47,000-line monolith that rebuilt everything itself: a router across five LLM providers, an always-listening wake word, a desktop HUD and a gaming mode that tuned the kernel with root helpers. It taught me a lot, but it was never reliable enough to depend on: free model endpoints kept expiring, the always-on microphone was fragile, and it fought the operating system instead of working with it.
 
----
+v2 applies that lesson. The same goals now take a fraction of the code, run with no root access, and come with a test suite and self-verifying deploys. The v1 design is archived in [`docs/v1/`](docs/v1/).
 
-## Engineering decisions worth noting
-
-- **Model choice is data, not opinion.** The scorecard ranks agent/model pairs per task category using my own usage history. While wiring NEXUS to it, I found and fixed a bug in Phantom: it recommended the short model id from history, while the agent only accepted the catalog's full id, so the recommendation was silently ignored.
-- **Read-only by construction.** The Google token could write, but NEXUS only issues GET requests, and from Gmail it requests metadata only.
-- **Tests never touch the live machine.** Every fake raises on any call it didn't expect: real HTTP, Telegram, notifications or IMAP fail the test instead of silently running. That rule comes from v1, where a test that didn't fail opened real browser tabs.
-- **Nothing invasive.** No sudo, no `/sys`, no self-installed autostart, no polling loops. Removing it means deleting user units.
-- **Human-gated where it matters.** Agents implement, a reviewer verifies before anything is merged, and restarts that would interrupt live work are run by me, not by the assistant.
+| | v1 | v2 |
+|---|---|---|
+| Size | ~47,000 lines | ~1,900 lines + 110 tests |
+| Model choice | Hand-written 5-provider router | Measured scorecard |
+| Voice | Always-on wake word | Push-to-talk, voice per agent |
+| System tuning | Root helpers, kernel settings | None (native desktop tools) |
+| Reach | Desktop + one bot | Desktop, phone, Telegram, cloud watchdog |
 
 ---
 
-## Roadmap
+## What this project demonstrates
 
-| Phase | Status |
-|---|---|
-| Retire v1 (services, root helpers, remote power channel) | Done |
-| `nexus-mcp` + guaranteed daily briefing | Done |
-| Voice per agent · Telegram `/menu` | Done (in Phantom) |
-| Push-to-talk with a global shortcut | Next |
-| Project copilot: watch my repos, fix in an isolated worktree, reviewed before merging | Planned |
-| Shared memory across agents | Planned |
-| Phone access over Tailscale + a deterministic always-on cloud watchdog | Planned |
-
----
-
-## For employers and reviewers
-
-This project shows:
-
-- **Systems thinking over feature count.** I rebuilt a 47k-line system as ~700 lines on top of existing tools, and I can explain exactly what v1 taught me.
-- **LLM engineering grounded in measurement.** Model routing comes from a measured scorecard, with a fallback strategy for provider quotas.
-- **Linux integration done natively.** MCP, `systemd --user` timers, desktop entries and Plasma notifications, with no root.
-- **Operational honesty.** Failures found in testing (quota exhaustion, a model-id mismatch, three bugs in the voice service) were root-caused and turned into guards and tests.
+- **Systems design with restraint.** Replacing a large custom system with a small layer on top of solid tools, and being able to explain what the first version taught me.
+- **LLM engineering grounded in measurement.** Routing by measured error rates, fallbacks for provider quotas, and verification instead of trusting what an agent reports.
+- **Native Linux integration.** MCP, `systemd` user units and path watchers, KDE global shortcuts over D-Bus, desktop entries and Plasma notifications.
+- **Operational discipline.** Real failures found while building were root-caused and turned into tests and guards: a free tier running out of quota, a model-id mismatch, overlapping voices, build artifacts in commits.
 
 A live walkthrough of the private implementation is available on request.
 
-<sub>v1 HUD, retired: <a href="assets/v1_hud.png">screenshot</a></sub>
+<sub>Retired v1 interface: <a href="assets/v1_hud.png">screenshot</a> · Not licensed for reuse; see <a href="NOTICE.md">NOTICE</a>.</sub>
