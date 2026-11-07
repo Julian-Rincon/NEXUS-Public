@@ -17,7 +17,7 @@
 
 ## In one paragraph
 
-NEXUS is my personal AI assistant. It plans my day, talks with a voice of its own, remembers what matters across every AI agent I use, and watches all my code repositories so a broken test gets fixed, reviewed and merged without me asking. It is not a standalone app: it is a small personal layer (~1,900 lines of Python plus tests) on top of **[Phantom](https://github.com/Julian-Rincon/phantom)**, my multi-agent workbench that runs Claude Code, OpenCode and Hermes side by side. Phantom provides the agents, models, UI and voice. NEXUS provides context, memory and initiative.
+NEXUS is my personal AI assistant. It plans my day, talks with a voice of its own, remembers what matters across every AI agent I use, and watches all my code repositories so a broken test gets fixed, reviewed and merged without me asking. It is not a standalone app: it is a personal layer (~12,000 lines of Python, 1,483 tests) on top of **[Phantom](https://github.com/Julian-Rincon/phantom)**, my multi-agent workbench that runs Claude Code, OpenCode and Hermes side by side. Phantom provides the agents, models, UI and voice. NEXUS provides context, memory and initiative.
 
 <div align="center">
 <img src="assets/v2/nexus-in-phantom.png" alt="NEXUS answering inside its own workspace in Phantom" width="900" />
@@ -122,7 +122,7 @@ v2 applies that lesson. The same goals now take a fraction of the code, run with
 
 | | v1 | v2 |
 |---|---|---|
-| Size | ~47,000 lines | ~1,900 lines + 110 tests |
+| Size | ~47,000 lines | ~12,000 lines + 1,483 tests |
 | Model choice | Hand-written 5-provider router | Measured scorecard |
 | Voice | Always-on wake word | Push-to-talk, voice per agent |
 | System tuning | Root helpers, kernel settings | None (native desktop tools) |
