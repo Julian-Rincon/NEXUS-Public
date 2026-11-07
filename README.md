@@ -140,3 +140,8 @@ v2 applies that lesson. The same goals now take a fraction of the code, run with
 A live walkthrough of the private implementation is available on request.
 
 <sub>Retired v1 interface: <a href="assets/v1_hud.png">screenshot</a> · Not licensed for reuse; see <a href="NOTICE.md">NOTICE</a>.</sub>
+
+---
+
+<!-- julian-rincon-footer -->
+<p align="center"><sub>Built by <b>Julián Rincón</b> · <a href="https://julian-rincon.github.io/#p-nexus">Portfolio</a> · <a href="https://www.linkedin.com/in/julian-esteban-rinc%C3%B3n-rodriguez-1a05501b7/">LinkedIn</a> · <a href="https://github.com/Julian-Rincon">GitHub</a></sub></p>
