@@ -8,8 +8,10 @@
 
 ![Version](https://img.shields.io/badge/version-v2%20·%20Oct%202026-ff1616?style=for-the-badge&labelColor=050001)
 ![Platform](https://img.shields.io/badge/runs%20on-Phantom%20·%20Fedora%20KDE-ff1616?style=for-the-badge&labelColor=050001)
-![Tests](https://img.shields.io/badge/tests-110%20NEXUS%20·%2013k%2B%20Phantom-ff1616?style=for-the-badge&labelColor=050001)
+![Tests](https://img.shields.io/badge/tests-1%2C483%20NEXUS%20·%2013k%2B%20Phantom-ff1616?style=for-the-badge&labelColor=050001)
 ![Root](https://img.shields.io/badge/root%20access-none-ff1616?style=for-the-badge&labelColor=050001)
+
+<p align="center"><a href="https://julian-rincon.github.io/assets/videos/nexus.mp4"><img src="https://julian-rincon.github.io/assets/videos/nexus.jpg" width="720" alt="▶ Watch the video (~1 min, subtitled)"></a><br><sub>▶ Watch the video (~1 min, subtitled)</sub></p>
 
 </div>
 
