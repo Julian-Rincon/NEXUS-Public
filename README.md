@@ -145,7 +145,8 @@ The code is private, so these commands run against the private repository's chec
 
 **Criteria.**
 
-- A test counts only if it **passes**: 1,667 is the `passed` figure `pytest` prints, not the number collected (1,668). The one skipped test is marked `slow`: it calls a real local model service and only runs when `FORGE_VISION_REAL=1` is set.- Lines are counted over `src/` only, which holds the application code. Tests, scripts, deploy files, docs and the legacy data are excluded.
+- A test counts only if it **passes**: 1,667 is the `passed` figure `pytest` prints, not the number collected (1,668). The one skipped test is marked `slow`: it calls a real local model service and only runs when `FORGE_VISION_REAL=1` is set.
+- Lines are counted over `src/` only, which holds the application code. Tests, scripts, deploy files, docs and the legacy data are excluded.
 - The headline "~15,000" is the **physical** count: it includes blank lines and comments. Counting only lines that carry code gives about 12,700. No line counter other than `wc` and `grep` is used, so the numbers are reproducible on any Linux machine.
 - Figures are tied to a date because both grow with every commit.
 
