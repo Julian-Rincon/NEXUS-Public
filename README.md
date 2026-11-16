@@ -132,6 +132,25 @@ v2 applies that lesson. The same goals now take a fraction of the code, run with
 
 ---
 
+## How it's measured
+
+The code is private, so these commands run against the private repository's checkout, not this one. This section documents the method and the criteria so each figure can be checked on a walkthrough or re-run by anyone granted access. Measured on 2026-11-16 (Python 3.14; the project requires 3.12+).
+
+| Metric | Value | Command (from the private repo root) | Measured |
+|---|---|---|---|
+| Tests | 1,667 passed, 0 failed, 1 skipped (in ~50 s) | `pip install -e ".[dev]" && python -m pytest -q` | 2026-11-16 |
+| Python lines in `src/`, physical | 15,378 (65 files), shown as "~15,000" | `find src -name '*.py' \| xargs cat \| wc -l` | 2026-11-16 |
+| Same, without blank lines | 13,017 | `find src -name '*.py' \| xargs cat \| grep -c -v '^\s*$'` | 2026-11-16 |
+| Same, without blank or comment-only lines | 12,668 | `find src -name '*.py' \| xargs cat \| grep -c -v -E '^\s*(#.*)?$'` | 2026-11-16 |
+
+**Criteria.**
+
+- A test counts only if it **passes**: 1,667 is the `passed` figure `pytest` prints, not the number collected (1,668). The one skipped test is marked `slow`: it calls a real local model service and only runs when `FORGE_VISION_REAL=1` is set.- Lines are counted over `src/` only, which holds the application code. Tests, scripts, deploy files, docs and the legacy data are excluded.
+- The headline "~15,000" is the **physical** count: it includes blank lines and comments. Counting only lines that carry code gives about 12,700. No line counter other than `wc` and `grep` is used, so the numbers are reproducible on any Linux machine.
+- Figures are tied to a date because both grow with every commit.
+
+---
+
 ## What this project demonstrates
 
 - **Systems design with restraint.** Replacing a large custom system with a small layer on top of solid tools, and being able to explain what the first version taught me.
